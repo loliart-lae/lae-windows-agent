@@ -1,6 +1,7 @@
 test.py
 backup.py
 MythicMobs
+win-agent.spec
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -17,7 +17,6 @@ errorTime = []
 # 清除错误记录
 def clear_error():
     while True:
-        print(errorTime)
         if (int(time.time()) - 60 in errorTime):
             errorTime.remove(int(time.time()) - 60)
         time.sleep(1)
@@ -27,7 +26,7 @@ def GetConfig(filename):
     f = open(filename, encoding="utf-8")
     global Config
     Config = yaml.load(f, Loader= yaml.SafeLoader)
-    f.close
+    f.close()
 
 # 通讯模块
 def run_q():
