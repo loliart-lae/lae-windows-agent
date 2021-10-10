@@ -43,10 +43,25 @@ def run_q():
             print("[DEBUG - 通信] 处理输出分割出错")
 
 class EchoHTTPHandler(BaseHTTPRequestHandler):
-
-    def sendState(self, code):
+    # 返回执行状态
+    def sendReturn(self, code):
         JsonCode = {}
         JsonCode['status'] = code
+
+        try:
+            text = json.dumps(JsonCode)
+            text = text.encode('utf8')
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            self.wfile.write(text)
+        except:
+            print("[DEBUG] 返回 Json 出错")
+    # 返回资源占用
+    def sendstatus(self):
+        JsonCode = {}
+        JsonCode['cpu'] = psutil.virtual_memory().percent
+        JsonCode['ram'] = psutil.cpu_percent()
 
         try:
             text = json.dumps(JsonCode)
@@ -64,17 +79,12 @@ class EchoHTTPHandler(BaseHTTPRequestHandler):
         # 错误冻结检查
         if (len(errorTime) >= 10):
             print("[WARN] 安全保护, 已阻止一条连接")
-            self.sendState(0)
-            return
-
-        # 内存检查
-        if (psutil.virtual_memory().percent > 90):
-            self.sendState(0)
+            self.sendReturn(0)
             return
 
         # 语法检查
         if (self.path == "/" or "?" not in self.path or len(self.path.split("?")) != 2): 
-            self.sendState(0)
+            self.sendReturn(0)
             return
         string = self.path.split("?")[1]
         
@@ -90,14 +100,22 @@ class EchoHTTPHandler(BaseHTTPRequestHandler):
         # 检查 token
         if ("token" not in args or args["token"] != Config["token"]):
             errorTime.append(int(time.time()))
-            self.sendState(0)
+            self.sendReturn(0)
             return
+        
+        # 内存检查
+        whitelist =['logout', 'status']
+        
+        if (type not in whitelist):
+            if (psutil.virtual_memory().percent > 90):
+                self.sendReturn(0)
+                return
         
         # 预设的注销程序
         if (type == "logout"):
             # 如果参数中没有 username
             if ("username" not in args):
-                self.sendState(0)
+                self.sendReturn(0)
                 return
 
             # 运行 CMD
@@ -123,6 +141,10 @@ class EchoHTTPHandler(BaseHTTPRequestHandler):
                         os.system("logoff " + userID)
                         break
                 time.sleep(0.1)
+        # 获取资源状态
+        elif (type == "status"):
+            self.sendstatus()
+            return
 
         # 根据配置文件执行语句
         if (type in Config):
@@ -133,8 +155,8 @@ class EchoHTTPHandler(BaseHTTPRequestHandler):
             state = True
 
         # 返回 Json
-        if (state): self.sendState(1)
-        else: self.sendState(0)
+        if (state): self.sendReturn(1)
+        else: self.sendReturn(0)
 
 # 通信部分    
 q = Queue()
