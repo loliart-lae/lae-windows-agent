@@ -3,7 +3,7 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from threading import Thread
 from queue import Queue
-import argparse, os, yaml, time, json, psutil
+import os, yaml, time, json, psutil
 import Cmd
 
 # 全局变量
@@ -164,7 +164,6 @@ q = Queue()
 if __name__ == '__main__':
     GetConfig('config.yml')
     
-
     ip = Config["address"]
     port = Config["port"]
 
