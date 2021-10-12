@@ -3,7 +3,7 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from threading import Thread
 from queue import Queue
-import os, yaml, time, json, psutil
+import argparse, os, yaml, time, json, psutil
 import Cmd
 
 # 全局变量
@@ -58,10 +58,14 @@ class EchoHTTPHandler(BaseHTTPRequestHandler):
         except:
             print("[DEBUG] 返回 Json 出错")
     # 返回资源占用
-    def sendstatus(self):
+    def sendStatus(self):
         JsonCode = {}
-        JsonCode['cpu'] = psutil.virtual_memory().percent
-        JsonCode['ram'] = psutil.cpu_percent()
+
+        memory = psutil.virtual_memory()
+        memory_lv = float(memory.used) / float(memory.total) * 100
+
+        JsonCode['cpu'] = psutil.cpu_percent(interval=2)
+        JsonCode['ram'] = round(memory_lv, 2)
 
         try:
             text = json.dumps(JsonCode)
@@ -107,7 +111,9 @@ class EchoHTTPHandler(BaseHTTPRequestHandler):
         whitelist =['logout', 'status']
         
         if (type not in whitelist):
-            if (psutil.virtual_memory().percent > 90):
+            memory = psutil.virtual_memory()
+            memory_lv = float(memory.used) / float(memory.total) * 100
+            if (memory_lv > 90):
                 self.sendReturn(0)
                 return
         
@@ -143,7 +149,7 @@ class EchoHTTPHandler(BaseHTTPRequestHandler):
                 time.sleep(0.1)
         # 获取资源状态
         elif (type == "status"):
-            self.sendstatus()
+            self.sendStatus()
             return
 
         # 根据配置文件执行语句
