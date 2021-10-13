@@ -4,6 +4,7 @@ port: 8080
 
 token: loliart
 
+# 可自定义的指令组
 create:
   - net user $username $password /add
   - net user $username $password
