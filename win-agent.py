@@ -1,5 +1,5 @@
-# Bing_Yanchi
 # 主程序
+# By Bing_Yanchi From loliart-lae
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from threading import Thread
 from queue import Queue

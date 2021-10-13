@@ -1,7 +1,8 @@
 # 指令执行
 # 根据通道返回内容
+# By Bing_Yanchi From loliart-lae
 
-import subprocess,time
+import subprocess
 
 class CmdGo:
 
@@ -17,7 +18,6 @@ class CmdGo:
             line = line.strip().decode("GB2312")
             result.append(line)
             print(line)
-            #time.sleep(0.1)
         
         if (type == "logout"):
             if (len(result) < 2):
