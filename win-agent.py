@@ -117,6 +117,8 @@ class EchoHTTPHandler(BaseHTTPRequestHandler):
                 self.sendReturn(0)
                 return
         
+        global cmdID
+        
         # 预设的注销程序
         if (type == "logout"):
             # 如果参数中没有 username
@@ -125,7 +127,6 @@ class EchoHTTPHandler(BaseHTTPRequestHandler):
                 return
 
             # 运行 CMD
-            global cmdID
             cmdID += 1
             nowID = cmdID
 
@@ -147,6 +148,39 @@ class EchoHTTPHandler(BaseHTTPRequestHandler):
                         os.system("logoff " + userID)
                         break
                 time.sleep(0.1)
+        elif (type == "create"):
+            # 如果参数中没有 username
+            if ("username" not in args):
+                self.sendReturn(0)
+                return
+
+            # 运行 CMD
+            cmdID += 1
+            nowID = cmdID
+
+            self.th_get_users = Thread(target=Cmd.Run, args=("users", "net user", nowID, q))
+            self.th_get_users.setDaemon(True)
+            self.th_get_users.start()
+
+            # 循环检测结果
+            for i in range(0, 30):
+                if str(nowID) in resultList:
+                    users = resultList[str(nowID)]
+                    del resultList[str(nowID)]
+                    
+                    if (users == "Fail"):
+                        self.sendReturn(0)
+                        return
+                    else:
+                        user = users.split(",")
+
+                        if (args["username"] in user):
+                            self.sendReturn(0)
+                            return
+                        else:
+                            pass
+                time.sleep(0.1)
+
         # 获取资源状态
         elif (type == "status"):
             self.sendStatus()
