@@ -1,6 +1,8 @@
 # lae-windows-agent
 Win Agent
 
+对应 `Light App Engine` 的 `共享的 Windows` 服务
+
 ### 编译
 1. 运行 `build.cmd`
 2. 拷贝 `config.yml` 到 `build\win-agent` 文件夹
