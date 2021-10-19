@@ -15,3 +15,6 @@ Win Agent
 
 ### 配置文件
 此部分过于简单易懂，不做解释
+
+### 疑难解答
+你有可能遇到的问题，由用户 dnyyfb 整理 [https://f.lightart.top/d/14-lae-windows-agent](https://f.lightart.top/d/14-lae-windows-agent)
