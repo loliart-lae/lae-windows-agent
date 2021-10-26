@@ -4,6 +4,26 @@ port: 8080
 
 token: loliart
 
+# 安全检查
+limit:
+  # token 多次错误
+  token:
+    # 多少秒内 (s)
+    time: 60
+    # 达到多少次 Token 错误
+    # 设置为 -1 禁用 token 错误检查, 设置为 0 会导致拒绝所有连接
+    fail: 10
+    # 冻结时间 (s), 不建议小于 time 的值
+    block: 300
+  # RAM 限制
+  ram:
+    # 超过百分之多少时 (0 为关闭, 可为小数)
+    percent: 90
+    # 这些指令可绕过此限制
+    pass:
+      - logout
+      - status
+
 # 可自定义的指令组
 create:
   - net user $username $password /add

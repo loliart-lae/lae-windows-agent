@@ -14,11 +14,15 @@ resultList = {}
 
 errorTime = []
 
+blockTime = 0
+
 # 清除错误记录
 def clear_error():
+    global blockTime
     while True:
-        if (int(time.time()) - 60 in errorTime):
-            errorTime.remove(int(time.time()) - 60)
+        clearTime = int(time.time()) - Config['limit']['token']['time']
+        if (clearTime in errorTime):
+            errorTime.remove(clearTime)
         time.sleep(1)
 
 # 读取配置文件
@@ -78,10 +82,11 @@ class EchoHTTPHandler(BaseHTTPRequestHandler):
             print("[DEBUG] 返回 Json 出错")
             
     def do_GET(self):
+        global blockTime
         state = False
 
         # 错误冻结检查
-        if (len(errorTime) >= 10):
+        if (int(time.time()) < blockTime):
             print("[WARN] 安全保护, 已阻止一条连接")
             self.sendReturn(0)
             return
@@ -103,17 +108,21 @@ class EchoHTTPHandler(BaseHTTPRequestHandler):
         
         # 检查 token
         if ("token" not in args or args["token"] != Config["token"]):
-            errorTime.append(int(time.time()))
+            # 如果启用安全限制
+            if (Config['limit']['token']['fail'] > 0):
+                errorTime.append(int(time.time()))
+                # 检查是否超出, 超出则冻结
+                if (len(errorTime) >= Config['limit']['token']['fail']):
+                    blockTime = int(time.time()) + Config['limit']['token']['block']
+
             self.sendReturn(0)
             return
         
-        # 内存检查
-        whitelist =['logout', 'status']
-        
-        if (type not in whitelist):
+        # 内存检查            
+        if (type not in Config['limit']['ram']['pass']):
             memory = psutil.virtual_memory()
             memory_lv = float(memory.used) / float(memory.total) * 100
-            if (memory_lv > 90):
+            if (memory_lv > Config['limit']['ram']['percent']):
                 self.sendReturn(0)
                 return
         
