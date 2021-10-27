@@ -6,9 +6,11 @@ Win Agent
 推荐 Python 版本：`3.6.5` ，不推荐版本 `3.6.10`
 
 ### 编译
-1. 运行 `build.cmd`
-2. 拷贝 `config.yml` 到 `build\win-agent` 文件夹
-3. 运行 `build\win-agent\win-agent.exe` 可执行文件
+1. 安装 `Python 3.6.5`
+2. 安装 第三方库 `pyyaml` `psutil` `pyinstaller`
+3. 运行 `build.cmd`
+4. 拷贝 `config.yml` 到 `build\win-agent` 文件夹
+5. 运行 `build\win-agent\win-agent.exe` 可执行文件
 
 #### 疑难解答
 你有可能遇到的问题，由用户 dnyyfb 整理 [https://f.lightart.top/d/14-lae-windows-agent](https://f.lightart.top/d/14-lae-windows-agent)
