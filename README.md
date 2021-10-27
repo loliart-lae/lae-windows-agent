@@ -3,6 +3,8 @@ Win Agent
 
 对应 `Light App Engine` 的 `共享的 Windows` 服务
 
+推荐 Python 版本：`3.6.5` ，不推荐版本 `3.6.10`
+
 ### 编译
 1. 运行 `build.cmd`
 2. 拷贝 `config.yml` 到 `build\win-agent` 文件夹
